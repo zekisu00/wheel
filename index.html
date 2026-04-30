@@ -292,6 +292,37 @@
       '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B88B', '#ABEBC6'
     ];
 
+    const STORAGE_FOODS_KEY = 'choiceWheelFoods';
+    const STORAGE_INPUT_KEY = 'choiceWheelLastInput';
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_FOODS_KEY, JSON.stringify(foods));
+        localStorage.setItem(STORAGE_INPUT_KEY, foodInput.value || '');
+      } catch (error) {
+        console.warn('無法存取 localStorage', error);
+      }
+    }
+
+    function loadState() {
+      try {
+        const savedFoods = localStorage.getItem(STORAGE_FOODS_KEY);
+        if (savedFoods) {
+          const parsed = JSON.parse(savedFoods);
+          if (Array.isArray(parsed)) {
+            foods = parsed;
+          }
+        }
+      } catch (error) {
+        console.warn('無法讀取儲存的選項', error);
+      }
+
+      const savedInput = localStorage.getItem(STORAGE_INPUT_KEY);
+      if (savedInput !== null) {
+        foodInput.value = savedInput;
+      }
+    }
+
     // 添加食物
     function addFood() {
       const food = foodInput.value.trim();
@@ -309,6 +340,7 @@
       foodInput.value = '';
       updateList();
       drawWheel();
+      saveState();
 
       // 不需要再啟用按鈕，因為按鈕已隱藏
     }
@@ -318,6 +350,7 @@
       foods.splice(index, 1);
       updateList();
       drawWheel();
+      saveState();
 
       // 不需要再禁用按鈕，因為按鈕已隱藏
     }
@@ -607,7 +640,11 @@
     });
 
     // 初始化
+    loadState();
+    updateList();
     drawWheel();
+
+    foodInput.addEventListener('input', saveState);
   </script>
 
 </body>

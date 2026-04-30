@@ -75,6 +75,28 @@
       background: #ffbf00;
     }
 
+    .button-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .clear-button {
+      padding: 0.8rem 1.5rem;
+      background: #ff4d4f;
+      color: #ffffff;
+      border: 2px solid #ff4d4f;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .clear-button:hover {
+      background: #e04345;
+      border-color: #e04345;
+    }
+
     .items-list {
       margin-top: 1rem;
       max-height: 200px;
@@ -122,7 +144,26 @@
     }
 
     .spin-button {
-      display: none;
+      display: inline-flex;
+      padding: 0.8rem 1.6rem;
+      background: #ffde59;
+      color: #111111;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .spin-button:hover:not(:disabled) {
+      background: #ffd633;
+      transform: translateY(-1px);
+    }
+
+    .spin-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     /* 結果彈窗 */
@@ -243,6 +284,9 @@
           >
           <button onclick="addFood()">加入</button>
         </div>
+        <div class="button-row">
+          <button class="clear-button" onclick="clearAllFoods()" type="button">清除全部</button>
+        </div>
         <div class="items-list" id="itemsList"></div>
       </div>
 
@@ -337,10 +381,10 @@
       }
 
       foods.push(food);
+      saveState();
       foodInput.value = '';
       updateList();
       drawWheel();
-      saveState();
 
       // 不需要再啟用按鈕，因為按鈕已隱藏
     }
@@ -367,6 +411,16 @@
       `
         )
         .join('');
+      spinBtn.disabled = foods.length === 0;
+    }
+
+    function clearAllFoods() {
+      if (!foods.length) return;
+      if (!confirm('確定要移除所有選項嗎？')) return;
+      foods = [];
+      updateList();
+      drawWheel();
+      saveState();
     }
 
     // 繪製轉盤
@@ -419,8 +473,8 @@
       // 繪製中心按鈕
       const buttonRadius = 30;
       const buttonGradient = ctx.createRadialGradient(centerX - 5, centerY - 5, 5, centerX, centerY, buttonRadius);
-      buttonGradient.addColorStop(0, '#ff7f7f');
-      buttonGradient.addColorStop(1, '#ff6b6b');
+      buttonGradient.addColorStop(0, '#fff29a');
+      buttonGradient.addColorStop(1, '#ffd166');
       
       ctx.fillStyle = buttonGradient;
       ctx.beginPath();
@@ -645,6 +699,7 @@
     drawWheel();
 
     foodInput.addEventListener('input', saveState);
+    window.addEventListener('beforeunload', saveState);
   </script>
 
 </body>

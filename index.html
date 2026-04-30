@@ -539,7 +539,7 @@
       // 計算獲勝的選項
       const sliceAngle = (Math.PI * 2) / foods.length;
       // 指針在上方，所以檢查 -Math.PI/2 處的角度
-      const normalizedRotation = (((-rotation + Math.PI / 2) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      const normalizedRotation = (((-rotation - Math.PI / 2) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
       const winIndex = Math.floor(normalizedRotation / sliceAngle) % foods.length;
 
       const winner = foods[winIndex];
